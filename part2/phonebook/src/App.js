@@ -1,23 +1,33 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Filter from "./components/Filter"
 import Persons from "./components/Persons"
 import PersonForm from "./components/PersonForm"
+import axios from "axios"
 
 const App = () => {
-	const [persons, setPersons] = useState([
-		{ name: "Arto Hellas", phone: "123-123-1234" },
-	])
+	const [persons, setPersons] = useState([])
 	const [newName, setNewName] = useState("")
 	const [newPhone, setNewPhone] = useState("")
 	const [newSearch, setSearch] = useState("")
 	const [filterResults, setNewResults] = useState([])
 
+	useEffect(() => {
+		axios.get("http://localhost:3001/persons").then((response) => {
+			setPersons(response.data)
+		})
+	}, [])
+
 	const addPerson = (e) => {
 		e.preventDefault()
-		const newPerson = { name: newName, phone: newPhone }
+		const newPerson = {
+			name: newName,
+			number: newPhone,
+			id: persons[persons.length - 1].id + 1,
+		}
 		const newNamePresent = persons.some(
 			(person) => person.name.toLowerCase() === newName.toLowerCase()
 		)
+		console.log(newPerson)
 
 		if (newNamePresent) {
 			alert(`${newName} is already in the phonebook`)
@@ -43,7 +53,9 @@ const App = () => {
 
 	const updateFilter = (e) => {
 		e.preventDefault()
-		const results = persons.filter((person) => person.name.toLowerCase().includes(newSearch.toLowerCase()))
+		const results = persons.filter((person) =>
+			person.name.toLowerCase().includes(newSearch.toLowerCase())
+		)
 
 		if (results.length === 0) {
 			alert("No results found")

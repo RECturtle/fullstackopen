@@ -5,7 +5,7 @@ const Persons = ({ persons, filterResults }) => {
 		return (
 			<div>
 				{persons.map((person) => (
-					<Person key={person.name} name={person.name} phone={person.phone} />
+					<Person key={person.id} name={person.name} number={person.number} />
 				))}
 			</div>
 		)
@@ -13,7 +13,7 @@ const Persons = ({ persons, filterResults }) => {
 	return (
 		<div>
 			{filterResults.map((person) => (
-				<Person key={person.name} name={person.name} phone={person.phone} />
+				<Person key={person.id} name={person.name} number={person.number} />
 			))}
 		</div>
 	)
