@@ -43,7 +43,7 @@ const App = () => {
 		)
 
 		setCountries(countryList)
-	}, [filtered, allCountries])
+	}, [allCountries, filtered])
 
 	return (
 		<div>

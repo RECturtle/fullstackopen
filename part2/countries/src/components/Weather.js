@@ -14,7 +14,7 @@ const Weather = ({ city }) => {
 			setWeather(weather)
 		}
 		fetchWeather()
-	}, [])
+	}, [api_key, city])
 
 	return (
 		<>
