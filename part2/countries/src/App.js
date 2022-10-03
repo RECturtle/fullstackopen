@@ -15,7 +15,7 @@ const App = () => {
 	useEffect(() => {
 		const timerId = setTimeout(() => {
 			setFilter(searchTerm)
-		}, 1000)
+		}, 100)
 
 		return () => {
 			clearTimeout(timerId)
@@ -48,7 +48,7 @@ const App = () => {
 	return (
 		<div>
 			<SearchForm updateSearch={updateSearch} />
-			<DisplayCountries countries={countries} />
+			<DisplayCountries countries={countries} setCountries={setCountries} />
 		</div>
 	)
 }
