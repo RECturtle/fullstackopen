@@ -1,11 +1,11 @@
 import Person from "./Person"
 
-const Persons = ({ persons, filterResults }) => {
+const Persons = ({ persons, deleteContact, filterResults }) => {
 	if (filterResults.length === 0) {
 		return (
 			<div>
 				{persons.map((person) => (
-					<Person key={person.id} name={person.name} number={person.number} />
+					<Person key={person.id} name={person.name} number={person.number} id={person.id} deleteContact={deleteContact} />
 				))}
 			</div>
 		)
@@ -13,7 +13,7 @@ const Persons = ({ persons, filterResults }) => {
 	return (
 		<div>
 			{filterResults.map((person) => (
-				<Person key={person.id} name={person.name} number={person.number} />
+				<Person key={person.id} name={person.name} number={person.number} id={person.id} deleteContact={deleteContact} />
 			))}
 		</div>
 	)

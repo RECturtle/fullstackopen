@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Filter from "./components/Filter"
 import Persons from "./components/Persons"
 import PersonForm from "./components/PersonForm"
-import axios from "axios"
+import contactService from "./services/contacts"
 
 const App = () => {
 	const [persons, setPersons] = useState([])
@@ -12,43 +12,83 @@ const App = () => {
 	const [filterResults, setNewResults] = useState([])
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/persons").then((response) => {
-			setPersons(response.data)
+		contactService.getPersons().then((initialContacts) => {
+			setPersons(initialContacts)
 		})
 	}, [])
 
-	const addPerson = (e) => {
+	const addPerson = async (e) => {
 		e.preventDefault()
 		const newPerson = {
 			name: newName,
 			number: newPhone,
-			id: persons[persons.length - 1].id + 1,
 		}
+
+		// Check if the name already exists
 		const newNamePresent = persons.some(
 			(person) => person.name.toLowerCase() === newName.toLowerCase()
 		)
-		console.log(newPerson)
 
+		// and if the name exists, alert the user and return
 		if (newNamePresent) {
 			alert(`${newName} is already in the phonebook`)
 			return
 		}
 
-		setPersons(persons.concat(newPerson))
-		setNewName("")
-		setNewPhone("")
+		// Check if newPerson's number already exists.
+		// If it does, ask if the user wants to update
+		if (await updatedPerson(newPerson)) {
+			return
+		}
+
+		// If name and number isn't present, create a new person
+		contactService.create(newPerson).then((returnedContact) => {
+			setPersons(persons.concat(returnedContact))
+			setNewName("")
+			setNewPhone("")
+		})
 	}
 
-	const handleNameChange = (e) => {
-		setNewName(e.target.value)
+	const updatedPerson = async (newPerson) => {
+		const newStrippedNumber = newPerson.number.replace(/\D/g, "")
+		const [sameNumberPerson] = persons.filter((person) => {
+			const strippedNumber = person.number.replace(/\D/g, "")
+			return strippedNumber === newStrippedNumber
+		})
+
+		// no matching numbers
+		if (!sameNumberPerson) {
+			return false
+		}
+
+		if (
+			window.confirm(
+				`Update ${sameNumberPerson.name}'s name to ${newPerson.name}?`
+			)
+		) {
+			const updatedContact = await contactService.updateContact(
+				newPerson,
+				sameNumberPerson.id
+			)
+			setPersons(
+				persons.map((person) =>
+					person.id !== updatedContact.id ? person : updatedContact
+				)
+			)
+			// clear name and phone entries if they confirm they'd like to update
+			setNewName("")
+			setNewPhone("")
+		}
+
+		return true
 	}
 
-	const handlePhoneChange = (e) => {
-		setNewPhone(e.target.value)
-	}
-
-	const handleSearchChange = (e) => {
-		setSearch(e.target.value)
+	const deleteContact = async (id) => {
+		if (await contactService.deleteContact(id)) {
+			contactService.getPersons().then((initialContacts) => {
+				setPersons(initialContacts)
+			})
+		}
 	}
 
 	const updateFilter = (e) => {
@@ -69,6 +109,18 @@ const App = () => {
 		setSearch("")
 	}
 
+	const handleNameChange = (e) => {
+		setNewName(e.target.value)
+	}
+
+	const handlePhoneChange = (e) => {
+		setNewPhone(e.target.value)
+	}
+
+	const handleSearchChange = (e) => {
+		setSearch(e.target.value)
+	}
+
 	return (
 		<div>
 			<h2>Phonebook</h2>
@@ -87,7 +139,11 @@ const App = () => {
 				newPhone={newPhone}
 			/>
 			<h2>Numbers</h2>
-			<Persons persons={persons} filterResults={filterResults} />
+			<Persons
+				persons={persons}
+				deleteContact={deleteContact}
+				filterResults={filterResults}
+			/>
 		</div>
 	)
 }
