@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import Filter from "./components/Filter"
+import Notification from "./components/Notification"
 import Persons from "./components/Persons"
 import PersonForm from "./components/PersonForm"
 import contactService from "./services/contacts"
@@ -10,6 +11,7 @@ const App = () => {
 	const [newPhone, setNewPhone] = useState("")
 	const [newSearch, setSearch] = useState("")
 	const [filterResults, setNewResults] = useState([])
+	const [message, setMessage] = useState(null)
 
 	useEffect(() => {
 		contactService.getPersons().then((initialContacts) => {
@@ -25,18 +27,38 @@ const App = () => {
 		}
 
 		// Check if the name already exists
-		const newNamePresent = persons.some(
+		const [matchedName] = persons.filter(
 			(person) => person.name.toLowerCase() === newName.toLowerCase()
 		)
 
-		// and if the name exists, alert the user and return
-		if (newNamePresent) {
-			alert(`${newName} is already in the phonebook`)
+		if (matchedName) {
+			if (
+				window.confirm(`Would you like to update ${newPerson.name}'s number?`)
+			) {
+				try {
+					const contact = await contactService.updateContact(
+						newPerson,
+						matchedName.id
+					)
+					setPersons(
+						persons.map((person) =>
+							person.id !== contact.id ? person : contact
+						)
+					)
+					banner(`Updated ${newPerson.name}'s number`)
+				} catch (e) {
+					banner(`${newPerson.name} has already been removed from the server`)
+					await refreshList()
+				}
+				clearFields()
+				return
+			}
 			return
 		}
 
 		// Check if newPerson's number already exists.
 		// If it does, ask if the user wants to update
+		// If updated, return and display message
 		if (await updatedPerson(newPerson)) {
 			return
 		}
@@ -44,8 +66,8 @@ const App = () => {
 		// If name and number isn't present, create a new person
 		contactService.create(newPerson).then((returnedContact) => {
 			setPersons(persons.concat(returnedContact))
-			setNewName("")
-			setNewPhone("")
+			clearFields()
+			banner(`Added ${newPerson.name}`)
 		})
 	}
 
@@ -66,28 +88,33 @@ const App = () => {
 				`Update ${sameNumberPerson.name}'s name to ${newPerson.name}?`
 			)
 		) {
-			const updatedContact = await contactService.updateContact(
-				newPerson,
-				sameNumberPerson.id
-			)
-			setPersons(
-				persons.map((person) =>
-					person.id !== updatedContact.id ? person : updatedContact
+			try {
+				const updatedContact = await contactService.updateContact(
+					newPerson,
+					sameNumberPerson.id
 				)
-			)
-			// clear name and phone entries if they confirm they'd like to update
-			setNewName("")
-			setNewPhone("")
-		}
 
+				setPersons(
+					persons.map((person) =>
+						person.id !== updatedContact.id ? person : updatedContact
+					)
+				)
+				banner(
+					`Updated ${newPerson.number}'s contact name to ${newPerson.name}`
+				)
+			} catch (e) {
+				banner(`${newPerson.name} has already been removed from the server`)
+				await refreshList()
+			}
+			// clear name and phone entries if they confirm they'd like to update
+			clearFields()
+		}
 		return true
 	}
 
 	const deleteContact = async (id) => {
 		if (await contactService.deleteContact(id)) {
-			contactService.getPersons().then((initialContacts) => {
-				setPersons(initialContacts)
-			})
+			await refreshList()
 		}
 	}
 
@@ -104,9 +131,27 @@ const App = () => {
 		setNewResults(results)
 	}
 
+	const banner = (msg) => {
+		setMessage(msg)
+		setTimeout(() => {
+			setMessage(null)
+		}, 5000)
+	}
+
+	const clearFields = () => {
+		setNewName("")
+		setNewPhone("")
+	}
+
 	const clearFilter = () => {
 		setNewResults([])
 		setSearch("")
+	}
+
+	const refreshList = async () => {
+		await contactService.getPersons().then((initialContacts) => {
+			setPersons(initialContacts)
+		})
 	}
 
 	const handleNameChange = (e) => {
@@ -124,6 +169,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={message} />
 			<Filter
 				updateFilter={updateFilter}
 				handleSearchChange={handleSearchChange}
