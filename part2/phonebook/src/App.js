@@ -12,6 +12,7 @@ const App = () => {
 	const [newSearch, setSearch] = useState("")
 	const [filterResults, setNewResults] = useState([])
 	const [message, setMessage] = useState(null)
+	const [messageType, setMessageType] = useState("")
 
 	useEffect(() => {
 		contactService.getPersons().then((initialContacts) => {
@@ -45,9 +46,9 @@ const App = () => {
 							person.id !== contact.id ? person : contact
 						)
 					)
-					banner(`Updated ${newPerson.name}'s number`)
+					banner(`Updated ${newPerson.name}'s number`, "success")
 				} catch (e) {
-					banner(`${newPerson.name} has already been removed from the server`)
+					banner(`${newPerson.name} has already been removed from the server`, "error")
 					await refreshList()
 				}
 				clearFields()
@@ -67,7 +68,7 @@ const App = () => {
 		contactService.create(newPerson).then((returnedContact) => {
 			setPersons(persons.concat(returnedContact))
 			clearFields()
-			banner(`Added ${newPerson.name}`)
+			banner(`Added ${newPerson.name}`, "success")
 		})
 	}
 
@@ -100,10 +101,10 @@ const App = () => {
 					)
 				)
 				banner(
-					`Updated ${newPerson.number}'s contact name to ${newPerson.name}`
+					`Updated ${newPerson.number}'s contact name to ${newPerson.name}`, "success"
 				)
 			} catch (e) {
-				banner(`${newPerson.name} has already been removed from the server`)
+				banner(`${newPerson.name} has already been removed from the server`, "error")
 				await refreshList()
 			}
 			// clear name and phone entries if they confirm they'd like to update
@@ -131,10 +132,12 @@ const App = () => {
 		setNewResults(results)
 	}
 
-	const banner = (msg) => {
+	const banner = (msg, msgType) => {
+		setMessageType(msgType)
 		setMessage(msg)
 		setTimeout(() => {
 			setMessage(null)
+			setMessageType("")
 		}, 5000)
 	}
 
@@ -169,7 +172,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
-			<Notification message={message} />
+			<Notification message={message} messageType={messageType} />
 			<Filter
 				updateFilter={updateFilter}
 				handleSearchChange={handleSearchChange}
