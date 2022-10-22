@@ -1,11 +1,16 @@
 const express = require("express")
-const morgan = require('morgan')
+const morgan = require("morgan")
 const app = express()
 
-morgan.token('data', function (req, res) { return JSON.stringify(req.body) })
+morgan.token("data", function (req, res) {
+	return JSON.stringify(req.body)
+})
 
+app.use(express.static('build'))
 app.use(express.json())
-app.use(morgan(":method :url :status :res[content-length] - :response-time ms :data"))
+app.use(
+	morgan(":method :url :status :res[content-length] - :response-time ms :data")
+)
 
 let persons = [
 	{
@@ -65,28 +70,9 @@ const validityChecks = (body) => {
 		return [false, "invalid data - phonenumber must include numbers"]
 	}
 
-	if (
-		persons.some(
-			(person) => person.name.toLowerCase() === body.name.toLowerCase()
-		)
-	) {
-		return [
-			false,
-			"duplicate found - a person with that name is already present",
-		]
-	}
-
-	const numberPresent = persons.some((person) => {
-		const existingStrippedNumber = person.number.replace(/\D/g, "")
-		return existingStrippedNumber === newStrippedNumber
-	})
-
-	if (numberPresent) {
-		return [
-			false,
-			"duplicate found - a person with that number is already present",
-		]
-	}
+	// Removed duplicate checks since the frontend will ask if the user if they
+	// would like to update the contact and then route the request to the correct
+	// endpoint (either stop and don't add/update or update the contact)
 
 	return [true, ""]
 }
@@ -126,7 +112,7 @@ app.get("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
 	const body = request.body
 
-	// run present and valid checks
+	// run validity checks
 	const [valid, msg] = validityChecks(body)
 
 	if (!valid) {
@@ -145,6 +131,32 @@ app.post("/api/persons", (request, response) => {
 	response.json(person)
 })
 
+// PUT - update a person by :id
+app.put("/api/persons/:id", (request, response) => {
+	const body = request.body
+	const id = Number(request.params.id)
+
+	// run validity checks
+	const [valid, msg] = validityChecks(body)
+
+	if (!valid) {
+		return response.status(400).json({
+			error: msg,
+		})
+	}
+
+	const updatedPerson = {
+		id: id,
+		name: body.name,
+		number: body.number,
+	}
+
+	const personIndex = persons.findIndex((person) => person.id === id)
+	persons[personIndex] = updatedPerson
+
+	response.json(updatedPerson)
+})
+
 // DELETE - delete a person by :id
 app.delete("/api/persons/:id", (request, response) => {
 	const id = Number(request.params.id)
@@ -153,7 +165,7 @@ app.delete("/api/persons/:id", (request, response) => {
 	response.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-	console.log(`Server running on ${PORT}`)
+	console.log(`Server running on port ${PORT}`)
 })
