@@ -1,12 +1,15 @@
+require("dotenv").config()
+const Contact = require("./models/contact")
 const express = require("express")
 const morgan = require("morgan")
+
 const app = express()
 
 morgan.token("data", function (req, res) {
 	return JSON.stringify(req.body)
 })
 
-app.use(express.static('build'))
+app.use(express.static("build"))
 app.use(express.json())
 app.use(
 	morgan(":method :url :status :res[content-length] - :response-time ms :data")
@@ -84,28 +87,29 @@ app.get("/", (request, response) => {
 
 // GET - get all contacts
 app.get("/api/persons", (request, response) => {
-	response.json(persons)
+	Contact.find({}).then((contacts) => {
+		response.json(contacts)
+	})
 })
 
 // GET - get info page
 app.get("/info", (request, response) => {
-	const htmlResponse = `<p>Phonebook has info for ${
-		persons.length
-	} people</p><p>${new Date()}`
-	response.send(htmlResponse)
+	Contact.countDocuments({}, function (err, count) {
+		const htmlResponse = `<p>Phonebook has info for ${count} people</p><p>${new Date()}`
+
+		response.send(htmlResponse)
+	})
 })
 
 // GET - get a person by :id
 app.get("/api/persons/:id", (request, response) => {
-	const id = Number(request.params.id)
-	const person = persons.find((person) => person.id === id)
-
-	// person found
-	if (person) {
-		response.json(person)
-	}
-
-	response.status(404).send("No person found with that id")
+	Contact.findById(request.params.id).then((contact) => {
+		// if (contact) {
+			response.json(contact)
+		// } else {
+		// 	response.status(404).send("No person found with that id")
+		// }
+	})
 })
 
 // POST - create a new person contact
