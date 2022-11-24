@@ -38,19 +38,6 @@ let persons = [
 	},
 ]
 
-// Generate a new id
-const generateId = () => {
-	const ids = persons.map((person) => person.id)
-	let id = 0
-
-	// ensure we don't return an existing id
-	while (id === 0 || ids.includes(id)) {
-		id = Math.floor(Math.random() * 1_000_000_000)
-	}
-
-	return id
-}
-
 const validityChecks = (body) => {
 	if (!body.name) {
 		return [false, "content missing - no name included"]
@@ -104,11 +91,7 @@ app.get("/info", (request, response) => {
 // GET - get a person by :id
 app.get("/api/persons/:id", (request, response) => {
 	Contact.findById(request.params.id).then((contact) => {
-		// if (contact) {
-			response.json(contact)
-		// } else {
-		// 	response.status(404).send("No person found with that id")
-		// }
+		response.json(contact)
 	})
 })
 
@@ -125,20 +108,19 @@ app.post("/api/persons", (request, response) => {
 		})
 	}
 
-	const person = {
-		id: generateId(),
+	const contact = new Contact({
 		name: body.name,
 		number: body.number,
-	}
+	})
 
-	persons = persons.concat(person)
-	response.json(person)
+	contact.save().then((savedContact) => {
+		response.json(savedContact)
+	})
 })
 
 // PUT - update a person by :id
 app.put("/api/persons/:id", (request, response) => {
 	const body = request.body
-	const id = Number(request.params.id)
 
 	// run validity checks
 	const [valid, msg] = validityChecks(body)
@@ -149,24 +131,25 @@ app.put("/api/persons/:id", (request, response) => {
 		})
 	}
 
-	const updatedPerson = {
-		id: id,
+	const contact = {
 		name: body.name,
 		number: body.number,
 	}
 
-	const personIndex = persons.findIndex((person) => person.id === id)
-	persons[personIndex] = updatedPerson
-
-	response.json(updatedPerson)
+	Contact.findByIdAndUpdate(request.params.id, contact, { new: true })
+		.then((updatedContact) => {
+			response.json(updatedContact)
+		})
+		.catch((error) => console.log(error))
 })
 
 // DELETE - delete a person by :id
 app.delete("/api/persons/:id", (request, response) => {
-	const id = Number(request.params.id)
-	persons = persons.filter((person) => person.id !== id)
-
-	response.status(204).end()
+	Contact.findByIdAndRemove(request.params.id)
+		.then((result) => {
+			response.status(204).end()
+		})
+		.catch((err) => console.log(err))
 })
 
 const PORT = process.env.PORT || 3001
