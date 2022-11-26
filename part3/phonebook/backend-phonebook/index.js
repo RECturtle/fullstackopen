@@ -15,28 +15,19 @@ app.use(
 	morgan(":method :url :status :res[content-length] - :response-time ms :data")
 )
 
-let persons = [
-	{
-		id: 1,
-		name: "Arto Hellas",
-		number: "040-123456",
-	},
-	{
-		id: 2,
-		name: "Ada Lovelace",
-		number: "39-44-5323523",
-	},
-	{
-		id: 3,
-		name: "Dan Abramov",
-		number: "12-43-234345",
-	},
-	{
-		id: 4,
-		name: "Mary Poppendieck",
-		number: "39-23-6423122",
-	},
-]
+const errorHandler = (error, request, response, next) => {
+	console.error(error.message)
+
+	if (error.name === "CastError") {
+		return response.status(400).send({ error: "malformatted id" })
+	}
+
+	next(error)
+}
+
+const unknownEndpoint = (request, response) => {
+	response.status(404).send({ error: "unknown endpoint" })
+}
 
 const validityChecks = (body) => {
 	if (!body.name) {
@@ -73,10 +64,14 @@ app.get("/", (request, response) => {
 })
 
 // GET - get all contacts
-app.get("/api/persons", (request, response) => {
-	Contact.find({}).then((contacts) => {
-		response.json(contacts)
-	})
+app.get("/api/persons", (request, response, next) => {
+	Contact.find({})
+		.then((contacts) => {
+			response.json(contacts)
+		})
+		.catch((error) => {
+			next(error)
+		})
 })
 
 // GET - get info page
@@ -89,14 +84,16 @@ app.get("/info", (request, response) => {
 })
 
 // GET - get a person by :id
-app.get("/api/persons/:id", (request, response) => {
-	Contact.findById(request.params.id).then((contact) => {
-		response.json(contact)
-	})
+app.get("/api/persons/:id", (request, response, next) => {
+	Contact.findById(request.params.id)
+		.then((contact) => {
+			response.json(contact)
+		})
+		.catch((error) => next(error))
 })
 
 // POST - create a new person contact
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
 	const body = request.body
 
 	// run validity checks
@@ -113,13 +110,16 @@ app.post("/api/persons", (request, response) => {
 		number: body.number,
 	})
 
-	contact.save().then((savedContact) => {
-		response.json(savedContact)
-	})
+	contact
+		.save()
+		.then((savedContact) => {
+			response.json(savedContact)
+		})
+		.catch((error) => next(error))
 })
 
 // PUT - update a person by :id
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
 	const body = request.body
 
 	// run validity checks
@@ -140,7 +140,7 @@ app.put("/api/persons/:id", (request, response) => {
 		.then((updatedContact) => {
 			response.json(updatedContact)
 		})
-		.catch((error) => console.log(error))
+		.catch((error) => next(error))
 })
 
 // DELETE - delete a person by :id
@@ -151,6 +151,10 @@ app.delete("/api/persons/:id", (request, response) => {
 		})
 		.catch((err) => console.log(err))
 })
+
+app.use(unknownEndpoint)
+// this has to be the last loaded middleware.
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
