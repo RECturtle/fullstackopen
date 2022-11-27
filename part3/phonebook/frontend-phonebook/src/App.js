@@ -48,8 +48,10 @@ const App = () => {
 					)
 					banner(`Updated ${newPerson.name}'s number`, "success")
 				} catch (e) {
-					banner(`${newPerson.name} has already been removed from the server`, "error")
-					console.log("error:", e)
+					banner(
+						`${newPerson.name} has already been removed from the server`,
+						"error"
+					)
 					await refreshList()
 				}
 				clearFields()
@@ -66,11 +68,16 @@ const App = () => {
 		}
 
 		// If name and number isn't present, create a new person
-		contactService.create(newPerson).then((returnedContact) => {
-			setPersons(persons.concat(returnedContact))
-			clearFields()
-			banner(`Added ${newPerson.name}`, "success")
-		})
+		contactService
+			.create(newPerson)
+			.then((returnedContact) => {
+				setPersons(persons.concat(returnedContact))
+				clearFields()
+				banner(`Added ${newPerson.name}`, "success")
+			})
+			.catch((error) => {
+				banner(error.response.data.error, "error")
+			})
 	}
 
 	const updatedPerson = async (newPerson) => {
@@ -102,10 +109,14 @@ const App = () => {
 					)
 				)
 				banner(
-					`Updated ${newPerson.number}'s contact name to ${newPerson.name}`, "success"
+					`Updated ${newPerson.number}'s contact name to ${newPerson.name}`,
+					"success"
 				)
 			} catch (e) {
-				banner(`${newPerson.name} has already been removed from the server`, "error")
+					banner(
+					e.response.data.error,
+					"error"
+				)
 				await refreshList()
 			}
 			// clear name and phone entries if they confirm they'd like to update

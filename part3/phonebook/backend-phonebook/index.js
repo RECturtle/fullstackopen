@@ -20,6 +20,8 @@ const errorHandler = (error, request, response, next) => {
 
 	if (error.name === "CastError") {
 		return response.status(400).send({ error: "malformatted id" })
+	} else if (error.name === "ValidationError") {
+		return response.status(400).json({ error: error.message })
 	}
 
 	next(error)
@@ -121,6 +123,7 @@ app.post("/api/persons", (request, response, next) => {
 // PUT - update a person by :id
 app.put("/api/persons/:id", (request, response, next) => {
 	const body = request.body
+	const { name, number } = request.body
 
 	// run validity checks
 	const [valid, msg] = validityChecks(body)
@@ -131,12 +134,11 @@ app.put("/api/persons/:id", (request, response, next) => {
 		})
 	}
 
-	const contact = {
-		name: body.name,
-		number: body.number,
-	}
-
-	Contact.findByIdAndUpdate(request.params.id, contact, { new: true })
+	Contact.findByIdAndUpdate(
+		request.params.id,
+		{ name, number },
+		{ new: true, runValidators: true, context: "query" }
+	)
 		.then((updatedContact) => {
 			response.json(updatedContact)
 		})
@@ -156,7 +158,13 @@ app.use(unknownEndpoint)
 // this has to be the last loaded middleware.
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`)
+})
+
+app.use(function (err, req, res, next) {
+	console.error(err);
+	res.status(err.status || 500).json();
 })
