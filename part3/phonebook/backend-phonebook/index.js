@@ -5,7 +5,7 @@ const morgan = require("morgan")
 
 const app = express()
 
-morgan.token("data", function (req, res) {
+morgan.token("data", function (req) {
 	return JSON.stringify(req.body)
 })
 
@@ -148,7 +148,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 // DELETE - delete a person by :id
 app.delete("/api/persons/:id", (request, response) => {
 	Contact.findByIdAndRemove(request.params.id)
-		.then((result) => {
+		.then(() => {
 			response.status(204).end()
 		})
 		.catch((err) => console.log(err))
@@ -162,9 +162,4 @@ app.use(errorHandler)
 const PORT = process.env.PORT
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`)
-})
-
-app.use(function (err, req, res, next) {
-	console.error(err);
-	res.status(err.status || 500).json();
 })

@@ -44,7 +44,7 @@ const Contact = mongoose.model("Contact", contactSchema)
 function retrieveContacts() {
 	mongoose
 		.connect(url)
-		.then((result) => {
+		.then(() => {
 			console.log("connected")
 
 			console.log("Phonebook:")
@@ -61,7 +61,7 @@ function retrieveContacts() {
 function createContact() {
 	mongoose
 		.connect(url)
-		.then((result) => {
+		.then(() => {
 			console.log("connected")
 
 			const contact = new Contact({

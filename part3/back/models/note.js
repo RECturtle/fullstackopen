@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const mongoose = require("mongoose")
 
 const url = process.env.DB_CONNECTION_STRING
