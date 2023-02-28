@@ -17,7 +17,7 @@ usersRouter.post("/", async (request, response) => {
 
 		if (password.length < 3) {
 			return response
-				.status(400)
+				.status(401)
 				.json({ error: "Password must be longer than 3 characters" });
 		}
 
@@ -34,8 +34,7 @@ usersRouter.post("/", async (request, response) => {
 
 		response.status(201).json(savedUser);
 	} catch (error) {
-		console.log(error);
-		response.status(400).json(error.message);
+		response.status(401).json(error.message);
 	}
 });
 
