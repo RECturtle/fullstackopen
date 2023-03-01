@@ -3,6 +3,14 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
+const decodeJWTToken = (request) => {
+	const decodedToken = jwt.verify(request.token, process.env.SECRET);
+	if (!decodedToken.id) {
+		return false;
+	}
+	return decodedToken;
+};
+
 blogRouter.get("/", async (request, response) => {
 	const blogs = await Blog.find({}).populate("user", {
 		username: 1,
@@ -13,12 +21,12 @@ blogRouter.get("/", async (request, response) => {
 
 blogRouter.post("/", async (request, response) => {
 	const body = request.body;
-	const decodedToken = jwt.verify(request.token, process.env.SECRET)
-	if (!decodedToken.id) {
+	const decodedToken = decodeJWTToken(request);
+	if (!decodedToken) {
 		return response.status(401).json({ error: "token invalid" });
 	}
 
-	const user = await User.findById(decodedToken.id)
+	const user = await User.findById(decodedToken.id);
 	const blog = new Blog({
 		title: body.title,
 		author: body.author,
@@ -43,8 +51,22 @@ blogRouter.post("/", async (request, response) => {
 });
 
 blogRouter.delete("/:id", async (request, response) => {
-	await Blog.findByIdAndRemove(request.params.id);
-	response.status(204).end();
+	const decodedToken = decodeJWTToken(request);
+	if (!decodedToken) {
+		return response.status(401).json({ error: "token invalid" });
+	}
+
+	const user = await User.findById(decodedToken.id);
+	const blog = await Blog.findById(request.params.id);
+
+	if (blog.user.toString() === user.id.toString()) {
+		await Blog.findByIdAndRemove(request.params.id);
+		return response.status(204).end();
+	} else {
+		return response
+			.status(401)
+			.json({ error: "Cannot delete another user's post" });
+	}
 });
 
 blogRouter.put("/:id", async (request, response) => {
