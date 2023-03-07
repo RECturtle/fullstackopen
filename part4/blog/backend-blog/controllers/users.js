@@ -15,10 +15,19 @@ usersRouter.post("/", async (request, response) => {
 	try {
 		const { username, name, password } = request.body;
 
-		if (password.length < 3) {
+		if (username.length < 3 || password.length < 3) {
 			return response
 				.status(401)
-				.json({ error: "Password must be longer than 3 characters" });
+				.json({
+					error: "Username and password must be longer than 3 characters",
+				});
+		}
+
+		const userCheck = await User.findOne({ username });
+		if (userCheck) {
+			return response
+				.status(401)
+				.json({ error: "Username must be unique" });
 		}
 
 		const saltRounds = 10;
