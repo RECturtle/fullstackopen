@@ -43,6 +43,10 @@ blogRouter.post("/", async (request, response) => {
 		return response.status(400).end();
 	}
 
+	if (blog.title.length < 5 || blog.author.length < 3 || blog.url.length < 3) {
+		return response.status(400).end();
+	}
+
 	const savedBlog = await blog.save();
 	user.blogs = user.blogs.concat(savedBlog._id);
 	await user.save();
