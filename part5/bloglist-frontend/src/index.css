@@ -33,7 +33,7 @@ body {
 .blog {
 	border-style: solid;
 	border-radius: 10px;
-	border-color: black;
+	border-color: #210753;
 	background-color: rgba(4, 185, 245, 0.103);
 	width: 400px;
 	padding: 5px;
@@ -41,7 +41,7 @@ body {
 }
 
 .form-container {
-	width: 500px;
+	width: 400px;
 	clear: both;
 }
 
@@ -53,8 +53,20 @@ body {
 
 .form-container button {
 	margin: 3px 0px 3px;
+	border-color: #210753;
+	background-color: rgba(4, 185, 245, 0.103);
+	border-radius: 3px;
+	padding: 3px;
 }
 
 .container p {
 	margin-bottom: 3px;
+}
+
+.container button {
+	margin: 3px 0px 3px;
+	border-color: #210753;
+	background-color: rgba(4, 185, 245, 0.103);
+	border-radius: 3px;
+	padding: 3px;
 }
