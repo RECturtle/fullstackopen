@@ -1,20 +1,20 @@
-import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
-import BlogForm from "./components/BlogForm";
-import LoginForm from "./components/LoginForm";
-import Notification from "./components/Notification";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
+import { useState, useEffect } from 'react';
+import Blog from './components/Blog';
+import BlogForm from './components/BlogForm';
+import LoginForm from './components/LoginForm';
+import Notification from './components/Notification';
+import blogService from './services/blogs';
+import loginService from './services/login';
 
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
-	const [title, setTitle] = useState("");
-	const [author, setAuthor] = useState("");
-	const [url, setURL] = useState("");
+	const [title, setTitle] = useState('');
+	const [author, setAuthor] = useState('');
+	const [url, setURL] = useState('');
 
 	const [user, setUser] = useState(null);
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
 
 	const [notificationMessage, setNotificationMessage] = useState(null);
 	const [isError, setIsError] = useState(false);
@@ -24,7 +24,7 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
-		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+		const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
 			setUser(user);
@@ -48,27 +48,27 @@ const App = () => {
 			});
 
 			window.localStorage.setItem(
-				"loggedBlogappUser",
+				'loggedBlogappUser',
 				JSON.stringify(user)
 			);
 
 			blogService.setToken(user.token);
 			setUser(user);
 			setIsError(false);
-			setNotificationMessage("Logged in Successfully");
+			setNotificationMessage('Logged in Successfully');
 			notificationTimeout();
-			setUsername("");
-			setPassword("");
+			setUsername('');
+			setPassword('');
 		} catch (exception) {
 			setIsError(true);
-			setNotificationMessage("Incorrect Username and/or Password");
+			setNotificationMessage('Incorrect Username and/or Password');
 			notificationTimeout();
 		}
 	};
 
 	const handleLogout = () => {
 		setIsError(false);
-		setNotificationMessage("Logged Out");
+		setNotificationMessage('Logged Out');
 		notificationTimeout();
 		window.localStorage.clear();
 		setUser(null);
@@ -93,15 +93,15 @@ const App = () => {
 			clearBlogForm();
 		} catch (exception) {
 			setIsError(true);
-			setNotificationMessage("Unable to Post the blog");
+			setNotificationMessage('Unable to Post the blog');
 			notificationTimeout();
 		}
 	};
 
 	const clearBlogForm = () => {
-		setAuthor("");
-		setTitle("");
-		setURL("");
+		setAuthor('');
+		setTitle('');
+		setURL('');
 	};
 
 	return (
@@ -132,17 +132,15 @@ const App = () => {
 						isError={isError}
 					/>
 					<div>
-						<h2>Current Blogs</h2>
-						{blogs.map((blog) => (
-							<Blog key={blog.id} blog={blog} />
-						))}
-						<p>You are logged in as: {user.name}</p>
-						<button onClick={handleLogout} type="text">
-							Logout
-						</button>
+						<h1>Current Blogs</h1>
+						<div className="blogBlock">
+							{blogs.map((blog) => (
+								<Blog key={blog.id} blog={blog} />
+							))}
+						</div>
 					</div>
 					<div>
-						<h2>Add a New Blog</h2>
+						<h1>Add a New Blog</h1>
 						<BlogForm
 							title={title}
 							author={author}
@@ -158,6 +156,12 @@ const App = () => {
 							}
 							handleBlogSubmit={handleBlogSubmit}
 						/>
+					</div>
+					<div className='container'>
+						<p>Current User: {user.name}</p>
+						<button onClick={handleLogout} type="text">
+							Logout
+						</button>
 					</div>
 				</div>
 			)}

@@ -1,3 +1,9 @@
+body {
+	font-family: Arial, monospace;
+	background-color: whitesmoke;
+	padding: 5px;
+}
+
 .error {
 	color: red;
 	background: lightgrey;
@@ -16,4 +22,39 @@
 	border-radius: 5px;
 	padding: 10px;
 	margin-bottom: 10px;
+}
+
+.blogBlock {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.blog {
+	border-style: solid;
+	border-radius: 10px;
+	border-color: black;
+	background-color: rgba(4, 185, 245, 0.103);
+	width: 400px;
+	padding: 5px;
+	word-wrap: break-word;
+}
+
+.form-container {
+	width: 500px;
+	clear: both;
+}
+
+.form-container input {
+	width: 100%;
+	clear: both;
+	margin: 3px 0px 3px;
+}
+
+.form-container button {
+	margin: 3px 0px 3px;
+}
+
+.container p {
+	margin-bottom: 3px;
 }

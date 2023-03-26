@@ -8,7 +8,7 @@ const BlogForm = ({
 	handleBlogSubmit,
 }) => {
 	return (
-		<div>
+		<div className="form-container">
 			<form onSubmit={handleBlogSubmit}>
 				<div>
 					Title:
