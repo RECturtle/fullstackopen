@@ -48,6 +48,16 @@ body {
 	word-wrap: break-word;
 }
 
+.blog button {
+	color: black;
+	border-color: #210753;
+	background-color: rgba(4, 185, 245, 0.103);
+	margin-right: 7px;
+	border-radius: 3px;
+	padding: 3px;
+	font-weight: 400;
+}
+
 .form-container {
 	width: 200px;
 	clear: both;
@@ -69,11 +79,6 @@ body {
 	font-weight: 400;
 }
 
-.form-container button:hover {
-	border-color: #210753;
-	background-color: rgba(4, 185, 245, 0.26);
-}
-
 .container {
 	width: 200px;
 	clear: both;
@@ -93,7 +98,7 @@ body {
 	font-weight: 400;
 }
 
-.container button:hover {
+.container button:hover, .form-container button:hover, .blog button:hover {
 	border-color: #210753;
 	background-color: rgba(4, 185, 245, 0.26);
 }

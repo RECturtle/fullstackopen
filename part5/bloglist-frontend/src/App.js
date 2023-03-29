@@ -67,7 +67,7 @@ const App = () => {
 	const addNewBlog = async (blog) => {
 		try {
 			const newBlog = await blogService.create(blog);
-			setBlogs(blogs.concat(newBlog))
+			setBlogs(blogs.concat(newBlog));
 			switchBlogVisibility();
 			setIsError(false);
 			setNotificationMessage(`New Blog Posted: ${newBlog.title}`);
@@ -79,7 +79,24 @@ const App = () => {
 			);
 			notificationTimeout();
 		}
-	}
+	};
+
+	const updateBlog = async (id, newBlog) => {
+		try {
+			const updatedBlog = await blogService.update(id, newBlog);
+			const newBlogs = blogs.map((blog) => {
+				if (blog.id === updatedBlog.id) {
+					return updatedBlog;
+				}
+				return blog;
+			});
+			setBlogs(newBlogs);
+		} catch (exception) {
+			setIsError(true);
+			setNotificationMessage('Unable to add like');
+			notificationTimeout();
+		}
+	};
 
 	const handleLogout = () => {
 		setIsError(false);
@@ -91,7 +108,7 @@ const App = () => {
 
 	const switchBlogVisibility = () => {
 		setFormVisible(!formIsVisible);
-	}
+	};
 
 	return (
 		<div>
@@ -124,7 +141,11 @@ const App = () => {
 						<h1>Current Blogs</h1>
 						<div className="blogBlock">
 							{blogs.map((blog) => (
-								<Blog key={blog.id} blog={blog} />
+								<Blog
+									key={blog.id}
+									blog={blog}
+									updateBlog={updateBlog}
+								/>
 							))}
 						</div>
 					</div>
