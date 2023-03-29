@@ -26,8 +26,16 @@ body {
 
 .blogBlock {
 	display: flex;
+	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 7px;
+	justify-content: left;
+	align-items: center;
+	gap: 10px;
+}
+
+.blogBlock::after {
+	content: "";
+	width: 416px;
 }
 
 .blog {
