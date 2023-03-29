@@ -8,9 +8,7 @@ import loginService from './services/login';
 
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
-	const [title, setTitle] = useState('');
-	const [author, setAuthor] = useState('');
-	const [url, setURL] = useState('');
+	const [formIsVisible, setFormVisible] = useState(false);
 
 	const [user, setUser] = useState(null);
 	const [username, setUsername] = useState('');
@@ -66,6 +64,23 @@ const App = () => {
 		}
 	};
 
+	const addNewBlog = async (blog) => {
+		try {
+			const newBlog = await blogService.create(blog);
+			setBlogs(blogs.concat(newBlog))
+			switchBlogVisibility();
+			setIsError(false);
+			setNotificationMessage(`New Blog Posted: ${newBlog.title}`);
+			notificationTimeout();
+		} catch (exception) {
+			setIsError(true);
+			setNotificationMessage(
+				'Unable to post - please check that it has all fields'
+			);
+			notificationTimeout();
+		}
+	}
+
 	const handleLogout = () => {
 		setIsError(false);
 		setNotificationMessage('Logged Out');
@@ -74,35 +89,9 @@ const App = () => {
 		setUser(null);
 	};
 
-	const handleBlogSubmit = async (event) => {
-		event.preventDefault();
-
-		try {
-			const blog = {
-				title,
-				author,
-				url,
-			};
-
-			const newBlog = await blogService.create(blog);
-			console.log(newBlog);
-			setBlogs(blogs.concat(newBlog));
-			setIsError(false);
-			setNotificationMessage(`New Blog Posted: ${newBlog.title}`);
-			notificationTimeout();
-			clearBlogForm();
-		} catch (exception) {
-			setIsError(true);
-			setNotificationMessage('Unable to Post the blog');
-			notificationTimeout();
-		}
-	};
-
-	const clearBlogForm = () => {
-		setAuthor('');
-		setTitle('');
-		setURL('');
-	};
+	const switchBlogVisibility = () => {
+		setFormVisible(!formIsVisible);
+	}
 
 	return (
 		<div>
@@ -139,25 +128,22 @@ const App = () => {
 							))}
 						</div>
 					</div>
-					<div>
-						<h1>Add a New Blog</h1>
-						<BlogForm
-							title={title}
-							author={author}
-							url={url}
-							handleTitleChange={({ target }) =>
-								setTitle(target.value)
-							}
-							handleAuthorChange={({ target }) =>
-								setAuthor(target.value)
-							}
-							handleUrlChange={({ target }) =>
-								setURL(target.value)
-							}
-							handleBlogSubmit={handleBlogSubmit}
-						/>
-					</div>
-					<div className='container'>
+					{!formIsVisible && (
+						<div className="container">
+							<button onClick={switchBlogVisibility} type="text">
+								Add a New Blog
+							</button>
+						</div>
+					)}
+					{formIsVisible && (
+						<div>
+							<BlogForm
+								addNewBlog={addNewBlog}
+								switchBlogVisibility={switchBlogVisibility}
+							/>
+						</div>
+					)}
+					<div className="container">
 						<p>Current User: {user.name}</p>
 						<button onClick={handleLogout} type="text">
 							Logout

@@ -27,7 +27,7 @@ body {
 .blogBlock {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 5px;
+	gap: 7px;
 }
 
 .blog {
@@ -41,32 +41,51 @@ body {
 }
 
 .form-container {
-	width: 400px;
+	width: 200px;
 	clear: both;
 }
 
 .form-container input {
 	width: 100%;
 	clear: both;
-	margin: 3px 0px 3px;
+	margin: 5px 0px 5px;
 }
 
 .form-container button {
-	margin: 3px 0px 3px;
+	color: black;
 	border-color: #210753;
 	background-color: rgba(4, 185, 245, 0.103);
+	margin: 7px 7px 0px 0px;
 	border-radius: 3px;
 	padding: 3px;
+	font-weight: 400;
+}
+
+.form-container button:hover {
+	border-color: #210753;
+	background-color: rgba(4, 185, 245, 0.26);
+}
+
+.container {
+	width: 200px;
+	clear: both;
 }
 
 .container p {
-	margin-bottom: 3px;
+	margin-bottom: 0px;
 }
 
 .container button {
-	margin: 3px 0px 3px;
+	color: black;
 	border-color: #210753;
 	background-color: rgba(4, 185, 245, 0.103);
+	margin-top: 7px;
 	border-radius: 3px;
 	padding: 3px;
+	font-weight: 400;
+}
+
+.container button:hover {
+	border-color: #210753;
+	background-color: rgba(4, 185, 245, 0.26);
 }

@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test jest --verbose --runInBand",
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
-    "build:ui": "rm -rf build && cd ../../bloglist-frontend/ && npm run build && cp -r build ../blog/backend-blog",
+    "build:ui": "rm -rf build && cd ../bloglist-frontend/ && npm run build && cp -r build ../backend-blog",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs"
