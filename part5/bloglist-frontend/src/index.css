@@ -50,6 +50,7 @@ body {
 }
 
 .blog button {
+	color: black;
 	background: #fff;
 	backface-visibility: hidden;
 	border-radius: 0.375rem;
