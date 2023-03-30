@@ -28,10 +28,10 @@ const Blog = ({ blog: { title, author, url, likes, id }, updateBlog }) => {
 					<p>
 						<b>Likes:</b> {likes}
 					</p>
-					<button type="text" onClick={addLike}>&#x1F44D; Like</button>
 					<button type="text" onClick={toggleDetailVisibility}>
 						Hide Details
 					</button>
+					<button type="text" onClick={addLike}>Like &#x1F44D;</button>
 				</div>
 			)}
 			{!detailsVisible && (

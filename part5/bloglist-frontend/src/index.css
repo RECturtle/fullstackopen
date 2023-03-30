@@ -46,6 +46,7 @@ body {
 	width: 400px;
 	padding: 5px;
 	word-wrap: break-word;
+	font-size: large;
 }
 
 .blog button {
@@ -56,6 +57,7 @@ body {
 	border-radius: 3px;
 	padding: 3px;
 	font-weight: 400;
+	font-size: 15px;
 }
 
 .form-container {
@@ -77,6 +79,7 @@ body {
 	border-radius: 3px;
 	padding: 3px;
 	font-weight: 400;
+	font-size: 15px;
 }
 
 .container {
@@ -96,6 +99,7 @@ body {
 	border-radius: 3px;
 	padding: 3px;
 	font-weight: 400;
+	font-size: 15px;
 }
 
 .container button:hover, .form-container button:hover, .blog button:hover {
