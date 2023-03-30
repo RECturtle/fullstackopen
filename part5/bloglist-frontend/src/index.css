@@ -34,7 +34,7 @@ body {
 }
 
 .blogBlock::after {
-	content: "";
+	content: '';
 	width: 416px;
 }
 
@@ -51,8 +51,8 @@ body {
 
 .blog button {
 	color: black;
-	border-color: #210753;
-	background-color: rgba(4, 185, 245, 0.103);
+	border-color: rgba(245, 60, 4, 0.75);
+	background-color: rgba(245, 60, 4, 0.25);
 	margin-right: 7px;
 	border-radius: 3px;
 	padding: 3px;
@@ -73,8 +73,8 @@ body {
 
 .form-container button {
 	color: black;
-	border-color: #210753;
-	background-color: rgba(4, 185, 245, 0.103);
+	border-color: rgba(245, 60, 4, 0.5);
+	background-color: rgba(245, 60, 4, 0.25);
 	margin: 7px 7px 0px 0px;
 	border-radius: 3px;
 	padding: 3px;
@@ -93,8 +93,8 @@ body {
 
 .container button {
 	color: black;
-	border-color: #210753;
-	background-color: rgba(4, 185, 245, 0.103);
+	border-color: rgba(245, 60, 4, 0.5);
+	background-color: rgba(245, 60, 4, 0.25);
 	margin-top: 7px;
 	border-radius: 3px;
 	padding: 3px;
@@ -102,7 +102,9 @@ body {
 	font-size: 15px;
 }
 
-.container button:hover, .form-container button:hover, .blog button:hover {
-	border-color: #210753;
-	background-color: rgba(4, 185, 245, 0.26);
+.container button:hover,
+.form-container button:hover,
+.blog button:hover {
+	border-color: rgba(245, 60, 4, 0.75);
+	background-color: rgba(245, 60, 4, 0.15);
 }
