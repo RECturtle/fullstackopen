@@ -51,9 +51,10 @@ blogRouter.post('/', async (request, response) => {
 		return response.status(400).end();
 	}
 
-	const savedBlog = await blog.save();
+	let savedBlog = await blog.save();
 	user.blogs = user.blogs.concat(savedBlog._id);
 	await user.save();
+	savedBlog = await savedBlog.populate('user', { username: 1, name: 1 });
 
 	return response.status(201).json(savedBlog);
 });
@@ -87,11 +88,17 @@ blogRouter.put('/:id', async (request, response) => {
 			likes: body.likes,
 		};
 
-		const updatedBlog = await Blog.findByIdAndUpdate(
+		let updatedBlog = await Blog.findByIdAndUpdate(
 			request.params.id,
 			blog,
-			{ new: true }
+			{ overwrite: false, new: true }
 		);
+
+		updatedBlog = await updatedBlog.populate('user', {
+			username: 1,
+			name: 1,
+		});
+
 		response.json(updatedBlog);
 	} catch (exception) {
 		return exception;

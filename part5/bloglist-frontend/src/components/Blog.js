@@ -1,6 +1,16 @@
 import { useState } from 'react';
 
-const Blog = ({ blog: { title, author, url, likes, id }, updateBlog }) => {
+const Blog = ({
+	blog: {
+		title,
+		author,
+		url,
+		likes,
+		id,
+		user: { username },
+	},
+	updateBlog,
+}) => {
 	const [detailsVisible, setDetailsVisible] = useState(false);
 
 	const toggleDetailVisibility = () => {
@@ -8,9 +18,9 @@ const Blog = ({ blog: { title, author, url, likes, id }, updateBlog }) => {
 	};
 
 	const addLike = () => {
-		likes += 1
-		updateBlog(id, {title, author, url, likes});
-	}
+		likes += 1;
+		updateBlog(id, { title, author, url, likes });
+	};
 
 	return (
 		<div className="blog">
@@ -26,12 +36,17 @@ const Blog = ({ blog: { title, author, url, likes, id }, updateBlog }) => {
 						<b>URL:</b> {url}
 					</p>
 					<p>
+						<b>Posted By:</b> {username}
+					</p>
+					<p>
 						<b>Likes:</b> {likes}
 					</p>
 					<button type="text" onClick={toggleDetailVisibility}>
 						Hide Details
 					</button>
-					<button type="text" onClick={addLike}>Like &#x1F44D;</button>
+					<button type="text" onClick={addLike}>
+						Like &#x1F44D;
+					</button>
 				</div>
 			)}
 			{!detailsVisible && (
