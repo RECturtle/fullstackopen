@@ -18,7 +18,11 @@ const App = () => {
 	const [isError, setIsError] = useState(false);
 
 	useEffect(() => {
-		blogService.getAll().then((blogs) => setBlogs(blogs));
+		const getBlogs = async () => {
+			let allBlogs = await blogService.getAll();
+			setBlogs(sortBlogs(allBlogs));
+		};
+		getBlogs();
 	}, []);
 
 	useEffect(() => {
@@ -64,10 +68,16 @@ const App = () => {
 		}
 	};
 
+	const sortBlogs = (blogs) => {
+		return blogs.sort((a, b) => {
+			return b.likes - a.likes;
+		});
+	};
+
 	const addNewBlog = async (blog) => {
 		try {
 			const newBlog = await blogService.create(blog);
-			setBlogs(blogs.concat(newBlog));
+			setBlogs(sortBlogs(blogs.concat(newBlog)));
 			switchBlogVisibility();
 			setIsError(false);
 			setNotificationMessage(`New Blog Posted: ${newBlog.title}`);
@@ -90,10 +100,28 @@ const App = () => {
 				}
 				return blog;
 			});
-			setBlogs(newBlogs);
+			setBlogs(sortBlogs(newBlogs));
 		} catch (exception) {
 			setIsError(true);
 			setNotificationMessage('Unable to add like');
+			notificationTimeout();
+		}
+	};
+
+	const removeBlog = async (id, blogTitle) => {
+		try {
+			const confirmed = window.confirm(`Remove: ${blogTitle}?`);
+			if (!confirmed) {
+				return;
+			}
+			await blogService.remove(id);
+			const filteredBlogs = blogs.filter((blog) => blog.id !== id);
+			setBlogs(sortBlogs(filteredBlogs));
+		} catch (exception) {
+			setIsError(true);
+			setNotificationMessage(
+				"Unable to delete blog"
+			);
 			notificationTimeout();
 		}
 	};
@@ -145,6 +173,8 @@ const App = () => {
 									key={blog.id}
 									blog={blog}
 									updateBlog={updateBlog}
+									removeBlog={removeBlog}
+									currentUsername={user.username}
 								/>
 							))}
 						</div>

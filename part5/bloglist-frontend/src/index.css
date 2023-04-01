@@ -48,20 +48,33 @@ body {
 	word-wrap: break-word;
 	font-size: large;
 }
+.blog-buttons {
+	display: flex;
+	flex-direction: row;
+}
 
-.blog button {
+.blog-button {
 	color: black;
-	background: #fff;
 	backface-visibility: hidden;
 	border-radius: 0.375rem;
 	border-style: solid;
 	border-color: #210753;
-	margin-right: 7px;
 	border-radius: 3px;
 	padding: 3px;
 	font-weight: 400;
 	font-size: 15px;
 	height: 28px;
+}
+
+.general-button {
+	background: #fff;
+	margin-right: 7px;
+
+}
+
+.delete-button {
+	background: rgba(226, 123, 123, 0.15);
+	margin-left: auto;
 }
 
 .form-container {
@@ -114,8 +127,12 @@ body {
 
 .container button:hover,
 .form-container button:hover,
-.blog button:hover {
-	border-color: #210753;
+.general-button:hover {
 	background-color: rgba(62, 205, 252, 0.1);
+	backface-visibility: hidden;
+}
+
+.delete-button:hover {
+	background: rgba(226, 123, 123, 0.25);
 	backface-visibility: hidden;
 }

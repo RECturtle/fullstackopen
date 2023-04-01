@@ -1,15 +1,10 @@
 import { useState } from 'react';
 
 const Blog = ({
-	blog: {
-		title,
-		author,
-		url,
-		likes,
-		id,
-		user: { username },
-	},
+	blog: { title, author, url, likes, id, user: {username} },
 	updateBlog,
+	removeBlog,
+	currentUsername,
 }) => {
 	const [detailsVisible, setDetailsVisible] = useState(false);
 
@@ -41,16 +36,35 @@ const Blog = ({
 					<p>
 						<b>Likes:</b> {likes}
 					</p>
-					<button type="text" onClick={toggleDetailVisibility}>
-						Hide Details
-					</button>
-					<button type="text" onClick={addLike}>
-						Like &#x1F44D;
-					</button>
+					<div className="blog-buttons">
+						<button
+							className="blog-button general-button"
+							type="text"
+							onClick={toggleDetailVisibility}
+						>
+							Hide Details
+						</button>
+						<button
+							className="blog-button general-button"
+							type="text"
+							onClick={addLike}
+						>
+							Like &#x1F44D;
+						</button>
+						{currentUsername === username && 
+							<button
+								className="blog-button delete-button"
+								type="text"
+								onClick={() => removeBlog(id, title)}
+							>
+								Delete
+							</button>
+						}
+					</div>
 				</div>
 			)}
 			{!detailsVisible && (
-				<button type="text" onClick={toggleDetailVisibility}>
+				<button className="blog-button general-button" type="text" onClick={toggleDetailVisibility}>
 					View Details
 				</button>
 			)}
