@@ -73,7 +73,7 @@ body {
 }
 
 .delete-button {
-	background: rgba(226, 123, 123, 0.15);
+	background: rgba(216, 13, 13, 0.363);
 	margin-left: auto;
 }
 
@@ -133,6 +133,6 @@ body {
 }
 
 .delete-button:hover {
-	background: rgba(226, 123, 123, 0.25);
+	background: rgba(216, 13, 13, 0.25);
 	backface-visibility: hidden;
 }
