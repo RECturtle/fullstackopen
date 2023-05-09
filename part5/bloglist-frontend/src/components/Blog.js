@@ -49,7 +49,7 @@ const Blog = ({
 							type="text"
 							onClick={addLike}
 						>
-							Like &#x1F44D;
+							Like
 						</button>
 						{currentUsername === username && 
 							<button
